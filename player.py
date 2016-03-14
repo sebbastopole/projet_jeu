@@ -24,4 +24,4 @@ class Player(object):
         self.circle = Circle(Point(self.pos.x,self.pos.y),self.size)
     def move(self,x,y):
         self.circle.move(x,y)
-    
+ 
