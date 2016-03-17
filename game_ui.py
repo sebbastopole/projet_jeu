@@ -1,7 +1,7 @@
 import pygame
 from level import Level
 from player import Player
-from utils import Point
+from utils import *
 
 
 
@@ -45,23 +45,32 @@ class UserInterface(object):
         self.erasePlayer(player)
         player.move(x,y)
         self.drawPlayer(player) 
+        
     def event(self, event):
         if event.key == pygame.K_UP:
-            self.movePlayer(self.p1,0,-5)
+            test_pos = Point(self.p1.pos.x,self.p1.pos.y-5)
+            if not collides(Circle(test_pos,self.p1.size),self.level.lines):
+                self.movePlayer(self.p1,0,-5)
         elif event.key == pygame.K_DOWN:
-            self.movePlayer(self.p1,0,5)
+            test_pos = Point(self.p1.pos.x,self.p1.pos.y+5)
+            if not collides(Circle(test_pos,self.p1.size),self.level.lines):
+                self.movePlayer(self.p1,0,5)
         elif event.key == pygame.K_RIGHT:
-            self.movePlayer(self.p1,5,0)
+            test_pos = Point(self.p1.pos.x+5,self.p1.pos.y)
+            if not collides(Circle(test_pos,self.p1.size),self.level.lines):
+                self.movePlayer(self.p1,5,0)
         elif event.key == pygame.K_LEFT:
-            self.movePlayer(self.p1,-5,0)
+            test_pos = Point(self.p1.pos.x-5,self.p1.pos.y)
+            if not collides(Circle(test_pos,self.p1.size),self.level.lines):
+                self.movePlayer(self.p1,-5,0)
         if event.key == pygame.K_z:
-            self.movePlayer(self.p2,0,-5)
+                self.movePlayer(self.p2,0,-5)
         elif event.key == pygame.K_s:
-            self.movePlayer(self.p2,0,5)
+                self.movePlayer(self.p2,0,5)
         elif event.key == pygame.K_d:
-            self.movePlayer(self.p2,5,0)
+                self.movePlayer(self.p2,5,0)
         elif event.key == pygame.K_q:
-            self.movePlayer(self.p2,-5,0)
+                self.movePlayer(self.p2,-5,0)
         print "player1: ",self.p1.pos
         print "player2: ",self.p2.pos
                 
