@@ -17,7 +17,7 @@ class UserInterface(object):
     def __init__(self):
         self.window=pygame.display.set_mode((800, 600))
         self.window.fill((255, 255, 255)) #Ecran blanc
-        pygame.display.flip()
+        pygame.display.flip()#flip = appliquer les modifications
              
     def setLevel(self,level):
         self.level = level   
@@ -46,7 +46,7 @@ class UserInterface(object):
         player.move(x,y)
         self.drawPlayer(player) 
     def event(self, event):
-        if event.key == pygame.K_UP:
+        if event.key == pygame.K_UP:#K_UP est une variable
             self.movePlayer(self.p1,0,-5)
         elif event.key == pygame.K_DOWN:
             self.movePlayer(self.p1,0,5)
@@ -64,7 +64,6 @@ class UserInterface(object):
             self.movePlayer(self.p2,-5,0)
         print "player1: ",self.p1.pos
         print "player2: ",self.p2.pos
-                
                 
                 
                 
