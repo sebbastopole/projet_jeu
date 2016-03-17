@@ -1,31 +1,22 @@
 from graphics import *
+from utils import Point
 
-class Position(object):
-    #represente une position x et y dans la fenetre
-    x=int()
-    y=int()
-    
-    def __init__(self,x=0,y=0):
-        self.x = x
-        self.y = y
-        
-    def __str__(self): #affichage d'une position (console) ex: (x:0-y:0)
-        return "(x:"+self.x+"-y:"+self.y+")"
+DEFAULT_PLAYER_SIZE = 10
         
 class Player(object):
 
+    pos = None #position du joueur
+    size = DEFAULT_PLAYER_SIZE #taille du joueur
     player_id = int() #numero du joueur
-    pos = Position() #position du joueur
+    p_color = None
     isAlive = True #joueur en vie ou non
-    circle = None #cercle du joueur
-    size = int()
     
-    def __init__(self, player_id, size):
+    def __init__(self, player_id, pos):
         self.player_id = player_id
-        self.size = size
-        #creation cercle du joueur:
-        self.circle = Circle(Point(self.pos.x,self.pos.y),self.size) 
+        self.pos = pos
+        color = (player_id*100)%255
+        self.p_color = (color,color,color)
         
-    def move(self,x,y): #bouge de cercle du joueur de x et y
-        self.circle.move(x,y)
+    def move(self,x,y): #bouge la pos du joueur de x et y
+        self.pos.move(x,y)
  
