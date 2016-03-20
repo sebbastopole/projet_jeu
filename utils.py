@@ -49,15 +49,26 @@ class Circle(object):
     def move(self,x,y):
         self.center.move(x,y)
     def hitbox(self):
-        up_right = Point(self.center.x-self.radius,self.center.y-self.radius)
-        up_left =  Point(self.center.x+self.radius,self.center.y-self.radius)
-        down_right = Point(self.center.x-self.radius,self.center.y+self.radius)
-        down_left = Point(self.center.x+self.radius,self.center.y+self.radius)
+        up_right = Point(self.center.x-self.radius-3,self.center.y-self.radius-3)
+        up_left =  Point(self.center.x+self.radius+3,self.center.y-self.radius-3)
+        down_right = Point(self.center.x-self.radius-3,self.center.y+self.radius+3)
+        down_left = Point(self.center.x+self.radius+3,self.center.y+self.radius+3)
         line_up = Line(up_right,up_left)
         line_left = Line(up_left,down_left)
         line_down = Line(down_left,down_right)
         line_right = Line(down_right,up_right)
         return [line_up,line_left,line_down,line_right]
+
+class Rectangle(object):    
+    pointUL= None
+    pointDR = None
+    color = None
+    def __init__(self,pointUL,pointDR,color):
+        self.pointUL = pointUL
+        self.pointDR = pointDR
+        self.color = color
+        
+    
         
 def ccw(A,B,C):
     return (C.y-A.y) * (B.x-A.x) > (B.y-A.y) * (C.x-A.x)   
@@ -67,7 +78,7 @@ def intersects(line1, line2):
     B = line1.p2
     C = line2.p1
     D = line2.p2
-    print A,B,C,D
+    #print A,B,C,D
     return ccw(A,C,D) != ccw(B,C,D) and ccw(A,B,C) != ccw(A,B,D)
     return False
  
@@ -79,7 +90,18 @@ def collides(circle,lines):
                 return True
     return False
     
-    
+def inside_rect(point1,rect):
+    point=rect.pointUL
+    point2=rect.pointDR
+    print point, point1, point2
+    if point1[0]>= point.x and point1[0] <= point2.x:
+        if point1[1] >=point.y and point1[1]<=point2.y:
+            inrect=True
+        else:
+            inrect=False
+    else:
+        inrect=False
+    return inrect    
     
     
     

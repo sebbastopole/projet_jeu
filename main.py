@@ -6,15 +6,13 @@ from level import Level
 
 def main():
     ui = UserInterface() #init interface utilisateur
-    ui.setLevel(Level())
-    ui.drawLevel()
-    running = True
-    while running:
+    while ui.running:
         event = pygame.event.poll()
         if event.type == pygame.QUIT:
-            running = False
+            ui.running = False
         elif event.type == pygame.KEYDOWN:
-            ui.event(event)
-    
+            ui.keyEvent(event)
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            ui.mouseEvent(event)
 main()
 
