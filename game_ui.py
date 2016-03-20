@@ -10,13 +10,14 @@ from pygame.locals import *
 
 class UserInterface(object):
 
-    MODE=(1200, 800)
+    MODE=(800, 600)
     window=None #fenetre du jeu
     running = True
-    menu = None
     level = None
+    title = None
     p1 = Player(1,Point(425,300))
     p2 = Player(2,Point(425,300))
+    m1 = None
 
     
     def __init__(self):
@@ -24,31 +25,39 @@ class UserInterface(object):
         self.window=pygame.display.set_mode(self.MODE)
         self.window.fill((255, 255, 255)) #Ecran blanc
         self.level= Level(self.MODE)
-        #self.drawLevel()
+        self.m1 = Monster(self,Point(145,200))
         #AI(self)
         #flip = appliquer les modifications
-        self.menu = Menu("MENU PRINCIPAL",self)
+        self.menu = Menu("Le Labyrinthe",self)
         pygame.display.flip()
+
     def changeDisplay(self,display):
-        self.window.fill((255, 255, 255)) #Ecran blanc   
+        self.window.fill((255, 255, 255)) #Ecran blanc
+
         if display == "PLAY":
             self.drawLevel()
-        if display == "QUIT":
+            self.drawMonster(self.m1)
+        elif display == "QUIT":
             self.running = False
-        
         else:
-            self.menu= Menu(display,self)   
+            self.menu= Menu(display,self)
         pygame.display.update()
+            
             
         
     def setLevel(self,level):
         self.level = level   
         
     def drawPlayer(self, player):
-        color = player.p_color
+        color = rgb()
         pos = player.pos.toTuple()
         pygame.draw.circle(self.window,color,pos,player.size)
         pygame.display.flip()
+    def drawMonster(self, monster):
+        pos = monster.pos.toTuple()
+        pygame.draw.circle(self.window,monster.m_color,pos,monster.size)
+        pygame.display.flip()
+        
         
     def erasePlayer(self,player):
         pos = player.pos.toTuple()
@@ -104,12 +113,13 @@ class UserInterface(object):
                     self.movePlayer(self.p2,-10,0)
         print "player1: ",self.p1.pos
         print "player2: ",self.p2.pos
+
                 
 class Button(object):
     rectangle = None
     action = None
     text = None
-    def __init__(self,rectangle,action,text):
+    def __init__(self,rectangle,text,action):
         self.rectangle = rectangle    
         self.action = action
         self.text = text
@@ -134,43 +144,46 @@ class Menu(object):
     title = None
     buttons = []
     ui = None
-
+    prop_title = None
     def __init__(self,title,ui):
         self.title = title
         self.ui = ui
         self.buttons = []
         self.make()
-        self.display()
-
+        self.display(True)
+    
     def make_buttons(self,list_names):
         n = len(list_names)
-        prop_title= self.ui.MODE[1]/(n+1)
+        self.prop_title= self.ui.MODE[1]/(n+1)
         prop_script= (self.ui.MODE[1]*n)/(n+1)
         nb_u=1.5+(1.5*n)
         u = prop_script/nb_u
-        color = (150,0,150)
+        color = rgb()
         rect_l = (self.ui.MODE[0])/3
         rect_r = (2*self.ui.MODE[0])/3
-        rect_up = prop_title+u
+        rect_up = self.prop_title+u
         for name in list_names:
             rect_dr= rect_up+u
             pointUL = Point(rect_l,rect_up)
             pointDR = Point(rect_r,rect_dr)
             r = Rectangle(pointUL,pointDR,color)
-            b = Button(r,name,name)
+            if type(name) == tuple:
+                b = Button(r,name[0],name[1])   
+            else:
+                b = Button(r,name,name)
             rect_up += u+(u/2)
             self.buttons.append(b)
             
     def make(self):
-        if self.title == "MENU PRINCIPAL":
+        if self.title == "Le Labyrinthe":
             self.make_buttons(["1PLAYER","MULTIPLAYER","EDITOR","CREDIT","QUIT"])
             print "make"  
         if self.title == "1PLAYER":
-            self.make_buttons(["DIFFICULTE","AVATAR","SEED","TYPE OF GAME","PLAY","BACK"])
+            self.make_buttons(["DIFFICULTE","AVATAR","SEED","TYPE OF GAME","PLAY",("BACK","Le Labyrinthe")])
         if self.title == "MULTIPLAYER":
-            self.make_buttons(["DIFFICULTE","AVATAR","SEED","TYPE OF GAME","PLAY","BACK"])
+            self.make_buttons(["DIFFICULTE","AVATAR","SEED","TYPE OF GAME","PLAY",("BACK","Le Labyrinthe")])
         if self.title == "EDITOR":
-            self.make_buttons(["WIGHT","HIGHT","SEED","GENERATE"])
+            self.make_buttons(["WIGHT","HIGHT","SEED","GENERATE",("BACK","Le Labyrinthe")])
         if self.title=="CREDIT":
             self.make_buttons(["ok credit"])
         if self.title == "QUIT":
@@ -183,8 +196,7 @@ class Menu(object):
             input("seed:")
         if self.title == "TYPES OF GAME":
             self.make_buttons(["CONTRE LA MONTRE","AFFRONTEMENT","SURVIVAL"])
-        if self.title == "BACK":
-            pygame.back
+        #if self.title == "BACK":
         """
         
         if self.title == "QUIT":
@@ -201,47 +213,36 @@ class Menu(object):
         if self.title == "MENU DIFFICULTE":
             self.make_buttons(["Facile","Moyen","Difficile"])"""
         
-    def display(self):
+    def display(self,pushed):
+        self.ui.window.fill(rgb())
+        font = pygame.font.SysFont('Arial',50)
+        text = font.render(self.title, 1,rgb())
+        textpos = text.get_rect(center=(self.ui.MODE[0]/2,self.prop_title/2))
+        self.ui.window.blit(text,textpos)
         for button in self.buttons:
             print len(self.buttons)
             x = button.rectangle.pointUL.x
             y = button.rectangle.pointUL.y
             w = self.ui.MODE[0]/3
             h = button.rectangle.pointDR.y-button.rectangle.pointUL.y
+            if pushed:
+                pygame.draw.rect(self.ui.window,rgb(),(x,y,w+2,h+2))
+            else:
+                pygame.draw.rect(self.ui.window,rgb(),(x-2,y-2,w+2,h+2))
             pygame.draw.rect(self.ui.window,button.rectangle.color,(x,y,w,h))
             t=button.textRectangle()
             self.ui.window.blit(t[0],t[1])
+
             pygame.display.flip()   
             pygame.display.update()
+        
         
     def mouseEvent(self, event):
         for button in self.buttons:        
             if inside_rect(event.pos,button.rectangle):
                 a = button.getAction()
-                self.ui.window.fill((255, 255, 255))
-                self.display()
+                self.display(False)
                 time.sleep(0.5)
                 self.ui.changeDisplay(a)
         
-    
-    
-    
-            
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
             

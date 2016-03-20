@@ -2,6 +2,7 @@ from utils import *
 import game_ui
 import random
 import time
+import level
 DEFAULT_PLAYER_SIZE = 10
         
 class Player(object):
@@ -56,3 +57,34 @@ class AI(object):
                 test_pos = Point(self.ui.p1.pos.x-5,self.ui.p1.pos.y)
                 if not collides(Circle(test_pos,self.ui.p1.size),self.ui.level.lines):
                     self.ui.movePlayer(self.ui.p1,-5,0)
+
+class Monster(object):
+    ui = None
+    pos = None 
+    size = DEFAULT_PLAYER_SIZE 
+    p_color = None
+    isAlive = True
+    actions = None
+    def __init__(self, ui, pos, action=0):
+        self.pos = pos
+        self.m_color = rgb()
+        self.ui = ui
+        #self.actions = []
+    def move(self,x,y): 
+        self.pos.move(x,y)
+
+
+        """
+        if action == self.actions[0]:
+            if not collides(Circle(self.pos,self.ui.level.PAS_X/2),self.ui.level.lines.x):
+                self.pos=(self.pos.x-5,self.pos.y)
+                self.pos.x -= 5
+            if not collides(Circle(self.pos,self.ui.level.PAS_X/2),self.ui.level.lines.y):
+                self.pos=(self.pos.x,self.pos.y-5)
+                self.pos.y -= 5
+        if action == self.actions[1]:
+            if collides(Circle(self.pos,self.ui.p1.size),self.ui.level.lines.x):
+                self.pos """
+            
+        
+   

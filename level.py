@@ -88,10 +88,4 @@ class Level(object):
                 self.lines.append(Line(point,point2))# ajout ligne de courant jusque en bas
             point = Point(var,point1.y+self.PAS_X)#courant= plus bas de PAS_X
             
-    
-        
-        
-        
-   
-
             

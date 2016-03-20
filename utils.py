@@ -1,3 +1,5 @@
+import random
+
 class Point(object):
     #represente une position x et y dans le plan
     
@@ -101,20 +103,14 @@ def inside_rect(point1,rect):
             inrect=False
     else:
         inrect=False
-    return inrect    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    return inrect  
+def rgb():
+    rgb = []
+    i=0
+    while i < 3:
+        n = random.randrange(0,255,1)
+        rgb.append(n)
+        i+=1
+    return rgb         
     
     
