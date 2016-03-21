@@ -1,4 +1,11 @@
 import random
+import time
+
+LEFT = 0
+RIGHT = 1
+UP = 2
+DOWN = 3
+DIR_STR = ["LEFT","RIGHT","UP","DOWN"]
 
 class Point(object):
     #represente une position x et y dans le plan
@@ -112,5 +119,80 @@ def rgb():
         rgb.append(n)
         i+=1
     return rgb         
+def inside_line (line,little_line):
+    if little_line.p1.x == little_line.p2.x or line.p1.x == line.p2.x:
+        if little_line.p1.x == line.p1.x and little_line.p2.x == line.p2.x:
+            if little_line.p1.y > line.p1.y and little_line.p2.y < line.p2.y:
+                return True
+        return False    
+    else:
+        if little_line.p1.x > line.p1.x and little_line.p2.x > line.p2.x:
+            if little_line.p1.y > line.p1.y and little_line.p2.y > line.p2.y:
+                line_y = line.p2.y-line.p1.y
+                line_x = line.p2.x-line.p1.x
+                little_line_y= little_line.p2.y-little_line.p1.y
+                little_line_x= little_line.p2.x-little_line.p1.x
+                m1= line_y /line_x
+                m2=  little_line_y/little_line_x 
+                if m1 == m2:
+                    #si les x et y sont "compris"
+                    return True
+                else:
+                    return False 
+
+def squar(point,lines,PAS_x):
+    linel = Line(Point(point.x-PAS_x/2,point.y-PAS_x/2),Point(point.x-PAS_x/2,point.y+PAS_x/2))
+    liner = Line(Point(point.x+PAS_x/2,point.y-PAS_x/2),Point(point.x+PAS_x/2,point.y+PAS_x/2))
+    lined = Line(Point(point.x-PAS_x/2,point.y+PAS_x/2),Point(point.x+PAS_x/2,point.y+PAS_x/2))
+    lineu = Line(Point(point.x-PAS_x/2,point.y-PAS_x/2),Point(point.x+PAS_x/2,point.y-PAS_x/2))
+    full_square = [linel,liner,lineu,lined]
+    real_square = []
+    for side in full_square:
+        exists = False
+        for line in lines:
+            if inside_line(line,side):
+                exists = True
+                real_square.append(exists)
+                print "exist"
+                break
+        if not exists:
+            print "not exist"
+            real_square.append(exists)
+    return real_square
+
+def get_random_direction(PAS_x):
+    direction = random.randrange(4)
+    if direction == LEFT:
+        return (LEFT,(-PAS_x/2,0))
+    if direction == RIGHT:
+        return (RIGHT,(PAS_x/2,0))
+    if direction == UP:
+        return (UP,(0,-PAS_x/2))
+    if direction == DOWN:
+        return (DOWN,(0,PAS_x/2))
+
+def get_direction(point, pas_x, lines):
+    sq = squar(point,lines,pas_x)
+    rand = get_random_direction(pas_x)
+    while True:
+        rand = get_random_direction(pas_x)
+        print "test: "+ DIR_STR[rand[0]]
+        if not sq[rand[0]]:
+            print "OK"
+            return rand[1]
+        else:
+            "NOPE"
+    print "move bug"
+    return (0,0)
+            
     
+    
+    
+    
+    
+        
+
+        
+        
+    square = (((point.x-PAS_x/2),(point.y-PAS_x/2)),((point.x-PAS_x/2),(point.y+PAS_x/2)),((point.x+PAS_x/2),(point.y-PAS_x/2)),())
     

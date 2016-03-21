@@ -27,6 +27,9 @@ class UserInterface(object):
         pygame.display.flip()
         
 #Display:
+    def tick(self):
+        if self.in_game:
+            self.drawMonsters(self.game.npcs.values())
     def changeDisplay(self,display):
         self.window.fill((255, 255, 255))
         if display == "PLAY":
@@ -43,10 +46,14 @@ class UserInterface(object):
         pygame.display.update() 
         
     def drawPlayers(self, players):
-        for player in players:
-            color = rgb()
-            pos = player.pos.toTuple()
-            pygame.draw.circle(self.window,color,pos,player.size)
+        color = rgb()
+        if type(players) == list:
+            for player in players:
+                pos = player.pos.toTuple()
+                pygame.draw.circle(self.window,color,pos,player.size)
+        else:
+            pos = players.pos.toTuple()
+            pygame.draw.circle(self.window,color,pos,players.size)
         pygame.display.flip()
         
     def drawMonsters(self, monsters):
@@ -72,7 +79,7 @@ class UserInterface(object):
     def movePlayer(self,player,x,y):
         self.erasePlayer(player)
         player.move(x,y)
-        self.drawPlayer(player) 
+        self.drawPlayers(player) 
         
 #Keyboard/Mouse:        
     def mouseEvent(self, event):
@@ -82,35 +89,35 @@ class UserInterface(object):
     def keyEvent(self, event):
         if event.key == pygame.K_UP:
             test_pos = Point(self.game.players[0].pos.x,self.game.players[0].pos.y-10)
-            if not collides(Circle(test_pos,self.game.players[0].size),self.level.lines):
+            if not collides(Circle(test_pos,self.game.players[0].size),self.game.level.lines):
                 self.movePlayer(self.game.players[0],0,-10)
         elif event.key == pygame.K_DOWN:
             test_pos = Point(self.game.players[0].pos.x,self.game.players[0].pos.y+10)
-            if not collides(Circle(test_pos,self.game.players[0].size),self.level.lines):
+            if not collides(Circle(test_pos,self.game.players[0].size),self.game.level.lines):
                 self.movePlayer(self.game.players[0],0,10)
         elif event.key == pygame.K_RIGHT:
             test_pos = Point(self.game.players[0].pos.x+10,self.game.players[0].pos.y)
-            if not collides(Circle(test_pos,self.game.players[0].size),self.level.lines):
+            if not collides(Circle(test_pos,self.game.players[0].size),self.game.level.lines):
                 self.movePlayer(self.game.players[0],10,0)
         elif event.key == pygame.K_LEFT:
             test_pos = Point(self.game.players[0].pos.x-10,self.game.players[0].pos.y)
-            if not collides(Circle(test_pos,self.game.players[0].size),self.level.lines):
+            if not collides(Circle(test_pos,self.game.players[0].size),self.game.level.lines):
                 self.movePlayer(self.game.players[0],-10,0)
         if event.key == pygame.K_z:
                 test_pos = Point(self.game.players[1].pos.x,self.game.players[1].pos.y-10)
-                if not collides(Circle(test_pos,self.game.players[1].size),self.level.lines):
+                if not collides(Circle(test_pos,self.game.players[1].size),self.game.level.lines):
                     self.movePlayer(self.game.players[1],0,-10)
         elif event.key == pygame.K_s:
                 test_pos = Point(self.game.players[1].pos.x,self.game.players[1].pos.y+10)
-                if not collides(Circle(test_pos,self.game.players[1].size),self.level.lines):
+                if not collides(Circle(test_pos,self.game.players[1].size),self.game.level.lines):
                     self.movePlayer(self.game.players[1],0,10)
         elif event.key == pygame.K_d:
                 test_pos = Point(self.game.players[1].pos.x+10,self.game.players[1].pos.y)
-                if not collides(Circle(test_pos,self.game.players[1].size),self.level.lines):
+                if not collides(Circle(test_pos,self.game.players[1].size),self.game.level.lines):
                     self.movePlayer(self.game.players[1],10,0)
         elif event.key == pygame.K_q:
                 test_pos = Point(self.game.players[1].pos.x-10,self.game.players[1].pos.y)
-                if not collides(Circle(test_pos,self.game.players[1].size),self.level.lines):
+                if not collides(Circle(test_pos,self.game.players[1].size),self.game.level.lines):
                     self.movePlayer(self.game.players[1],-10,0)
         print "player1: ",self.game.players[0].pos
         print "player2: ",self.game.players[1].pos

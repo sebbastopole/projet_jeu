@@ -9,7 +9,9 @@ def main():
     while ui.running:
         event = pygame.event.poll()
         if ui.in_game:
+            time.sleep(0.3)
             ui.game.tick()
+            ui.tick()
         if event.type == pygame.QUIT:
             ui.running = False
         elif event.type == pygame.KEYDOWN:

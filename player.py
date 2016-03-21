@@ -82,8 +82,17 @@ class BasicAI(CondActionAI):
     def __init__(self, game, entId):
         CondActionAI.__init__(self,game,entId)
         self.addAction(BasicAI.basicAction)
+        self.addAction(BasicAI.basicMove)
         
     def basicAction(self):
+        print "basic"
+    
+    def basicMove(self):
+        npc = self.game.npcs[self.entId]
+        pos = npc.pos
+        pas_x = self.game.level.PAS_X
+        lines = self.game.level.lines
+        npc.move(get_direction(pos,pas_x,lines))
             
     
 class Monster(object):
@@ -101,8 +110,8 @@ class Monster(object):
         self.entId = entId
         self.pos = pos
         
-    def move(self,x,y): 
-        self.pos.move(x,y)
+    def move(self,m): 
+        self.pos.move(m[0],m[1])
         
     def setAI(self, AI_class):
         self.ai = AI_class(self.game,self.entId)
