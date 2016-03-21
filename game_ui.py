@@ -1,6 +1,7 @@
 import pygame
 import sys
 import time
+from game import Game
 from level import Level
 from player import *
 from utils import *
@@ -11,54 +12,50 @@ from pygame.locals import *
 class UserInterface(object):
 
     MODE=(800, 600)
-    window=None #fenetre du jeu
+    window=None
+    game = None
     running = True
-    level = None
+    in_game = False
     title = None
-    p1 = Player(1,Point(425,300))
-    p2 = Player(2,Point(425,300))
-    m1 = None
 
     
     def __init__(self):
         pygame.init()
         self.window=pygame.display.set_mode(self.MODE)
-        self.window.fill((255, 255, 255)) #Ecran blanc
-        self.level= Level(self.MODE)
-        self.m1 = Monster(self,Point(145,200))
-        #AI(self)
-        #flip = appliquer les modifications
+        self.window.fill((255, 255, 255))
         self.menu = Menu("Le Labyrinthe",self)
         pygame.display.flip()
-
+        
+#Display:
     def changeDisplay(self,display):
-        self.window.fill((255, 255, 255)) #Ecran blanc
-
+        self.window.fill((255, 255, 255))
         if display == "PLAY":
+            self.game = Game(Level(self.MODE))
             self.drawLevel()
-            self.drawMonster(self.m1)
+            self.drawMonsters(self.game.npcs.values())
+            self.drawPlayers(self.game.players.values())
+            self.in_game = True
         elif display == "QUIT":
+            self.in_game = False
             self.running = False
         else:
             self.menu= Menu(display,self)
-        pygame.display.update()
-            
-            
+        pygame.display.update() 
         
-    def setLevel(self,level):
-        self.level = level   
-        
-    def drawPlayer(self, player):
-        color = rgb()
-        pos = player.pos.toTuple()
-        pygame.draw.circle(self.window,color,pos,player.size)
-        pygame.display.flip()
-    def drawMonster(self, monster):
-        pos = monster.pos.toTuple()
-        pygame.draw.circle(self.window,monster.m_color,pos,monster.size)
+    def drawPlayers(self, players):
+        for player in players:
+            color = rgb()
+            pos = player.pos.toTuple()
+            pygame.draw.circle(self.window,color,pos,player.size)
         pygame.display.flip()
         
-        
+    def drawMonsters(self, monsters):
+        for monster in monsters:
+            pos = monster.pos.toTuple()
+            pygame.draw.circle(self.window,monster.color,pos,monster.size)
+            pygame.draw.circle(self.window,(0,0,0),pos,monster.size/2)
+        pygame.display.flip()
+            
     def erasePlayer(self,player):
         pos = player.pos.toTuple()
         black = (255,255,255)
@@ -66,53 +63,57 @@ class UserInterface(object):
         pygame.display.flip()
             
     def drawLevel(self):
-        for line in self.level.lines:
+        for line in self.game.level.lines:
             p1 = line.p1.toTuple()
             p2 = line.p2.toTuple()
             pygame.draw.line(self.window,(0,0,0),p1,p2)
-        pygame.display.flip() #applique modification a l ecran
+        pygame.display.flip()
         
     def movePlayer(self,player,x,y):
         self.erasePlayer(player)
         player.move(x,y)
         self.drawPlayer(player) 
+        
+#Keyboard/Mouse:        
     def mouseEvent(self, event):
-        self.menu.mouseEvent(event)
+        if not self.in_game:
+            self.menu.mouseEvent(event)
+        
     def keyEvent(self, event):
         if event.key == pygame.K_UP:
-            test_pos = Point(self.p1.pos.x,self.p1.pos.y-10)
-            if not collides(Circle(test_pos,self.p1.size),self.level.lines):
-                self.movePlayer(self.p1,0,-10)
+            test_pos = Point(self.game.players[0].pos.x,self.game.players[0].pos.y-10)
+            if not collides(Circle(test_pos,self.game.players[0].size),self.level.lines):
+                self.movePlayer(self.game.players[0],0,-10)
         elif event.key == pygame.K_DOWN:
-            test_pos = Point(self.p1.pos.x,self.p1.pos.y+10)
-            if not collides(Circle(test_pos,self.p1.size),self.level.lines):
-                self.movePlayer(self.p1,0,10)
+            test_pos = Point(self.game.players[0].pos.x,self.game.players[0].pos.y+10)
+            if not collides(Circle(test_pos,self.game.players[0].size),self.level.lines):
+                self.movePlayer(self.game.players[0],0,10)
         elif event.key == pygame.K_RIGHT:
-            test_pos = Point(self.p1.pos.x+10,self.p1.pos.y)
-            if not collides(Circle(test_pos,self.p1.size),self.level.lines):
-                self.movePlayer(self.p1,10,0)
+            test_pos = Point(self.game.players[0].pos.x+10,self.game.players[0].pos.y)
+            if not collides(Circle(test_pos,self.game.players[0].size),self.level.lines):
+                self.movePlayer(self.game.players[0],10,0)
         elif event.key == pygame.K_LEFT:
-            test_pos = Point(self.p1.pos.x-10,self.p1.pos.y)
-            if not collides(Circle(test_pos,self.p1.size),self.level.lines):
-                self.movePlayer(self.p1,-10,0)
+            test_pos = Point(self.game.players[0].pos.x-10,self.game.players[0].pos.y)
+            if not collides(Circle(test_pos,self.game.players[0].size),self.level.lines):
+                self.movePlayer(self.game.players[0],-10,0)
         if event.key == pygame.K_z:
-                test_pos = Point(self.p2.pos.x,self.p2.pos.y-10)
-                if not collides(Circle(test_pos,self.p2.size),self.level.lines):
-                    self.movePlayer(self.p2,0,-10)
+                test_pos = Point(self.game.players[1].pos.x,self.game.players[1].pos.y-10)
+                if not collides(Circle(test_pos,self.game.players[1].size),self.level.lines):
+                    self.movePlayer(self.game.players[1],0,-10)
         elif event.key == pygame.K_s:
-                test_pos = Point(self.p2.pos.x,self.p2.pos.y+10)
-                if not collides(Circle(test_pos,self.p2.size),self.level.lines):
-                    self.movePlayer(self.p2,0,10)
+                test_pos = Point(self.game.players[1].pos.x,self.game.players[1].pos.y+10)
+                if not collides(Circle(test_pos,self.game.players[1].size),self.level.lines):
+                    self.movePlayer(self.game.players[1],0,10)
         elif event.key == pygame.K_d:
-                test_pos = Point(self.p2.pos.x+10,self.p2.pos.y)
-                if not collides(Circle(test_pos,self.p2.size),self.level.lines):
-                    self.movePlayer(self.p2,10,0)
+                test_pos = Point(self.game.players[1].pos.x+10,self.game.players[1].pos.y)
+                if not collides(Circle(test_pos,self.game.players[1].size),self.level.lines):
+                    self.movePlayer(self.game.players[1],10,0)
         elif event.key == pygame.K_q:
-                test_pos = Point(self.p2.pos.x-10,self.p2.pos.y)
-                if not collides(Circle(test_pos,self.p2.size),self.level.lines):
-                    self.movePlayer(self.p2,-10,0)
-        print "player1: ",self.p1.pos
-        print "player2: ",self.p2.pos
+                test_pos = Point(self.game.players[1].pos.x-10,self.game.players[1].pos.y)
+                if not collides(Circle(test_pos,self.game.players[1].size),self.level.lines):
+                    self.movePlayer(self.game.players[1],-10,0)
+        print "player1: ",self.game.players[0].pos
+        print "player2: ",self.game.players[1].pos
 
                 
 class Button(object):
@@ -177,41 +178,24 @@ class Menu(object):
     def make(self):
         if self.title == "Le Labyrinthe":
             self.make_buttons(["1PLAYER","MULTIPLAYER","EDITOR","CREDIT","QUIT"])
-            print "make"  
         if self.title == "1PLAYER":
-            self.make_buttons(["DIFFICULTE","AVATAR","SEED","TYPE OF GAME","PLAY",("BACK","Le Labyrinthe")])
+            self.make_buttons(["DIFFICULTE","AVATAR","SEED","GAME TYPE","PLAY",("BACK","Le Labyrinthe")])
         if self.title == "MULTIPLAYER":
-            self.make_buttons(["DIFFICULTE","AVATAR","SEED","TYPE OF GAME","PLAY",("BACK","Le Labyrinthe")])
+            self.make_buttons(["DIFFICULTE","AVATAR","SEED","GAME TYPE","PLAY",("BACK","Le Labyrinthe")])
         if self.title == "EDITOR":
             self.make_buttons(["WIGHT","HIGHT","SEED","GENERATE",("BACK","Le Labyrinthe")])
         if self.title=="CREDIT":
-            self.make_buttons(["ok credit"])
+            self.make_buttons(["FUCK IT"])
         if self.title == "QUIT":
             pygame.quit       
         if self.title == "DIFFICULTE":
-            self.make_buttons(["FACILE","MOYEN","DIFFICILE"])
+            self.make_buttons(["EASY","MEDIUM","HARD"])
         if self.title == "AVATAR":
-            self.make_buttons(["AVATAR1","AVATAR1","AVATAR3"])
+            self.make_buttons(["AVATAR_1","AVATAR_2","AVATAR_3"])
         if self.title == "SEED":
             input("seed:")
-        if self.title == "TYPES OF GAME":
-            self.make_buttons(["CONTRE LA MONTRE","AFFRONTEMENT","SURVIVAL"])
-        #if self.title == "BACK":
-        """
-        
-        if self.title == "QUIT":
-        if self.title == "PLAY":
-        if self.title == "DIFFICULTE":
-            self.make_buttons(["
-        if self.title == "SEED":
-            self.make_buttons(["
-        if self.title == "TYPES OF GAME":
-            self.make_buttons(["
-        if self.title == "BACK":
-        if self.title == "":
-        if self.title == "" :       
-        if self.title == "MENU DIFFICULTE":
-            self.make_buttons(["Facile","Moyen","Difficile"])"""
+        if self.title == "GAME TYPE":
+            self.make_buttons(["CHRONO","VERSUS","SURVIVAL"])
         
     def display(self,pushed):
         self.ui.window.fill(rgb())
@@ -220,7 +204,6 @@ class Menu(object):
         textpos = text.get_rect(center=(self.ui.MODE[0]/2,self.prop_title/2))
         self.ui.window.blit(text,textpos)
         for button in self.buttons:
-            print len(self.buttons)
             x = button.rectangle.pointUL.x
             y = button.rectangle.pointUL.y
             w = self.ui.MODE[0]/3
