@@ -4,7 +4,7 @@ from ai import *
 
 DEFAULT_ENTITY_SIZE = 10
 DEFAULT_MONSTER_SIZE = 5
-NPC_DEF_MOVE_INTERV = 0.75
+NPC_DEF_MOVE_INTERV = 0.75/10
         
 class Entity(Thread):
 

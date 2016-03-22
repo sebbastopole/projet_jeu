@@ -28,7 +28,7 @@ class BasicAI(CondActionAI):
         pos = npc.pos
         pas_x = self.game.level.PAS_X
         lines = self.game.level.lines
-        d = get_direction(pos,pas_x,lines)
+        d = get_direction(pos,npc.size,lines)
         if d != (0,0):
             npc.move(*d)
             self.game.ui.moved = True

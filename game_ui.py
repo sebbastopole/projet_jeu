@@ -14,7 +14,7 @@ GAME_TITLE = "Le Labyrinthe"
 BORDER_SIZE = 2
 
 #controls:
-MOVE_STEP = 3
+MOVE_STEP = 5
 
 class UserInterface(object):
 

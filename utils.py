@@ -151,26 +151,23 @@ def squar(point,lines,PAS_x):
             real_square.append(exists)
     return real_square
 
-def get_random_direction(PAS_x):
+def get_random_direction(d):
     direction = random.randrange(4)
     if direction == LEFT:
-        return (LEFT,(-PAS_x/2,0))
+        return (LEFT,(-d,0))
     if direction == RIGHT:
-        return (RIGHT,(PAS_x/2,0))
+        return (RIGHT,(d,0))
     if direction == UP:
-        return (UP,(0,-PAS_x/2))
+        return (UP,(0,-d/2))
     if direction == DOWN:
-        return (DOWN,(0,PAS_x/2))
+        return (DOWN,(0,d/2))
 
-def get_direction(point, pas_x, lines):
-    sq = squar(point,lines,pas_x)
-    print DIR_STR
-    print sq
-    rand = get_random_direction(pas_x)
+def get_direction(point, radius, lines):
     while True:
-        rand = get_random_direction(pas_x)
-        if not sq[rand[0]]:
-            print DIR_STR[rand[0]]
+        rand = get_random_direction(radius)
+        test_pos = Point(point.x+rand[1][0],point.y+rand[1][1])
+        m_circle = Circle(test_pos,radius)
+        if not collides(m_circle,lines):
             return rand[1]
     print "move bug"
     return (0,0)
