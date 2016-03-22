@@ -3,7 +3,7 @@ import random
 
 class Level(object):
     
-    PAS_X = 40
+    PAS_X = 50
     OFFSET=100
     lines = []
     w=None
@@ -25,6 +25,7 @@ class Level(object):
         self.lines.append(Line(up_left,down_left))
         self.lines.append(Line(down_left,down_right))
         self.lines.append(Line(down_right,up_right))
+        
     def labyrinthe(self):
         self.frame()
         var = self.PAS_X
@@ -32,6 +33,7 @@ class Level(object):
             self.wall(var)
             var+=self.PAS_X
         self.wall2()
+        
     def frame(self):
         up_left = Point (0,0)
         up_right = Point (self.w,0)
@@ -41,6 +43,7 @@ class Level(object):
         self.lines.append(Line(up_left,down_left))
         self.lines.append(Line(down_left,down_right))
         self.lines.append(Line(down_right,up_right))
+        
     def wall2(self):
         for elem in self.lines:
             print elem.p1,elem.p2
@@ -67,24 +70,16 @@ class Level(object):
     def wall (self,var):
         point=Point(var,0)
         point2=Point(var,self.h)
-        #print "--------------------"
         f = 1
         while point.y < point2.y - self.PAS_X:#tant que courant <bas
             reste= self.h-point.y
             l=self.h-point.y-self.PAS_X-(f*self.PAS_X*3)
             o=self.h-reste+self.PAS_X
             r=int(random.random()*l)+o
-            #print "de: "+str(o)+" a: "+str(o+l)+" r: "+str(r)
             point1=Point(var,r)
-            #print point1
-            if point1.y<=point2.y-self.PAS_X*3:#si random =< bas
-                self.lines.append(Line(point,point1))#ajouter ligne de courant a random
-                f = 0
-                #print "ok rand"
+            if point1.y<=point2.y-self.PAS_X*3:
+                self.lines.append(Line(point,point1))
             else:
-                #print "finir ligne"
-
-                f = 0
                 self.lines.append(Line(point,point2))# ajout ligne de courant jusque en bas
             point = Point(var,point1.y+self.PAS_X)#courant= plus bas de PAS_X
             

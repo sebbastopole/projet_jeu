@@ -1,23 +1,19 @@
 import pygame
 import time
 from game_ui import UserInterface
-from player import Player
-from level import Level
 
 def main():
     ui = UserInterface() #init interface utilisateur
     while ui.running:
         event = pygame.event.poll()
-        if ui.in_game:
-            time.sleep(0.3)
-            ui.game.tick()
-            ui.tick()
         if event.type == pygame.QUIT:
             ui.running = False
+            ui.game.stop()
         elif event.type == pygame.KEYDOWN:
             ui.keyEvent(event)
         elif event.type == pygame.MOUSEBUTTONDOWN:
             ui.mouseEvent(event)
+        ui.update()
         
 main()
 
