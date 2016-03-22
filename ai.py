@@ -1,9 +1,6 @@
 from utils import *
-from threading import Thread
 
-AI_INTERVAL = 0.5
-
-class CondActionAI(Thread):
+class CondActionAI(object):
 
     game = None
     entId = None
@@ -11,17 +8,15 @@ class CondActionAI(Thread):
     
     def __init__(self, game, entId):
     
-        Thread.__init__(self)
         self.game = game
         self.entId = entId
         
     def addAction(self, action):
         self.actions.append(action)
         
-    def run(self):
+    def decide(self):
         for action in self.actions:
-            action(self)
-        time.sleep(AI_INTERVAL)      
+            action(self)    
     
 class BasicAI(CondActionAI):
     

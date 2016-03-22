@@ -33,21 +33,13 @@ class UserInterface(object):
         pygame.display.flip()
         
 #Display:
-    def update(self):
-        if self.in_game:
-            self.eraseMonster(self.game.npcs[0])
-            self.game.actions()
-            self.drawMonster(self.game.npcs[0])
-            
     def changeDisplay(self,display):
         self.window.fill(BACKGROUND_COLOR)
         if display == "PLAY":
-            self.game = Game(Level(self.MODE))
-            self.drawLevel()
-            self.drawPlayer(self.game.players[0])
-            self.drawPlayer(self.game.players[1])
-            self.drawMonster(self.game.npcs[0])
+            self.game = Game(self)
             self.in_game = True
+            self.drawLevel()
+            self.game.start()
         elif display == "QUIT":
             self.in_game = False
             self.running = False

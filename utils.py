@@ -146,10 +146,8 @@ def squar(point,lines,PAS_x):
             if inside_line(line,side):
                 exists = True
                 real_square.append(exists)
-                print "exist"
                 break
         if not exists:
-            print "not exist"
             real_square.append(exists)
     return real_square
 
@@ -166,15 +164,14 @@ def get_random_direction(PAS_x):
 
 def get_direction(point, pas_x, lines):
     sq = squar(point,lines,pas_x)
+    print DIR_STR
+    print sq
     rand = get_random_direction(pas_x)
     while True:
         rand = get_random_direction(pas_x)
-        print "test: "+ DIR_STR[rand[0]]
         if not sq[rand[0]]:
-            print "OK"
+            print DIR_STR[rand[0]]
             return rand[1]
-        else:
-            "NOPE"
     print "move bug"
     return (0,0)
             

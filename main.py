@@ -8,12 +8,11 @@ def main():
         event = pygame.event.poll()
         if event.type == pygame.QUIT:
             ui.running = False
-            ui.game.stop()
+            ui.in_game = False
         elif event.type == pygame.KEYDOWN:
             ui.keyEvent(event)
         elif event.type == pygame.MOUSEBUTTONDOWN:
             ui.mouseEvent(event)
-        ui.update()
         
 main()
 
