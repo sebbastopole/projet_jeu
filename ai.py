@@ -31,5 +31,6 @@ class BasicAI(CondActionAI):
         d = get_direction(pos,pas_x,lines)
         if d != (0,0):
             npc.move(*d)
+            self.game.ui.moved = True
             
 

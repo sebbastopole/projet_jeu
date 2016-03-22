@@ -4,7 +4,6 @@ import random
 class Level(object):
     
     PAS_X = 50
-    OFFSET=100
     lines = []
     w=None
     h=None
@@ -13,18 +12,6 @@ class Level(object):
         self.w = dim[0]
         self.h = dim[1]
         self.labyrinthe()
-        
-    def basicLevel(self): #cadre distant de self.OFFSET pixels des bords (en 800x600)
-        # 4 coins du cadre:
-        up_left = Point(self.OFFSET,self.OFFSET)
-        up_right = Point(w-self.OFFSET,self.OFFSET)
-        down_left = Point(self.OFFSET,h-self.OFFSET)
-        down_right = Point(w-self.OFFSET,h-self.OFFSET)
-        # 4 lignes du cadre
-        self.lines.append(Line(up_right,up_left))
-        self.lines.append(Line(up_left,down_left))
-        self.lines.append(Line(down_left,down_right))
-        self.lines.append(Line(down_right,up_right))
         
     def labyrinthe(self):
         self.frame()

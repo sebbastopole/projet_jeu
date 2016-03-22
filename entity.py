@@ -4,6 +4,7 @@ from ai import *
 
 DEFAULT_ENTITY_SIZE = 10
 DEFAULT_MONSTER_SIZE = 5
+NPC_DEF_MOVE_INTERV = 0.75
         
 class Entity(Thread):
 
@@ -37,10 +38,10 @@ class Monster(Entity):
         self.ai = AI_class(self.game,self.entId)
         
     def run(self):
-        while self.game.ui.in_game:
+        while self.game.ui.in_game and self.game.ui.running:
             if self.ai != None:
                 self.ai.doAction()
-            time.sleep(0.1)
+            time.sleep(NPC_DEF_MOVE_INTERV)
 
 
         

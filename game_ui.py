@@ -24,6 +24,7 @@ class UserInterface(object):
     title = None
     running = True
     in_game = False
+    moved = False
     
     def __init__(self):
         pygame.init()
@@ -34,18 +35,21 @@ class UserInterface(object):
         
 #Display:
     def update(self):
-        self.window.fill(BACKGROUND_COLOR)
-        self.drawLevel()
-        for monster in self.game.npcs.values():
-            self.drawMonster(monster)
-        for player in self.game.players.values():
-            self.drawPlayer(player)
+        if self.moved:
+            self.window.fill(BACKGROUND_COLOR)
+            self.drawLevel()
+            for monster in self.game.npcs.values():
+                self.drawMonster(monster)
+            for player in self.game.players.values():
+                self.drawPlayer(player)
+            self.moved = False
             
     def changeDisplay(self,display):
         self.window.fill(BACKGROUND_COLOR)
         if display == "PLAY":
             self.game = Game(self)
             self.in_game = True
+            self.drawLevel()
             self.game.start()
         elif display == "QUIT":
             self.in_game = False
@@ -115,9 +119,8 @@ class UserInterface(object):
         test_pos = Point(p_x,p_y)
         p_circle = Circle(test_pos,player.size)
         if not collides(p_circle,self.game.level.lines):
-            self.erasePlayer(player)
             player.move(v_x,v_y)
-            self.drawPlayer(player)
+            self.moved = True
                 
 class Button(object):
 
