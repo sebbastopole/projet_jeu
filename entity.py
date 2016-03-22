@@ -35,7 +35,7 @@ class Monster(Entity):
         
     def action(self):
         if self.ai != None:
-            self.ai.decision()
+            self.ai.run()
 
 
         

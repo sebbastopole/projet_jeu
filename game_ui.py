@@ -6,7 +6,7 @@ from utils import *
 from game import *
 
 #display:
-BACKGROUND_COLOR = (200,200,200)
+BACKGROUND_COLOR = rgb()
 TITLE_COLOR = (25,25,25)
 BUTTONS_COLOR = (200,0,50)
 LEVEL_COLOR = (0,0,0)
@@ -35,17 +35,18 @@ class UserInterface(object):
 #Display:
     def update(self):
         if self.in_game:
-            self.drawMonsters(self.game.npcs.values())
+            self.eraseMonster(self.game.npcs[0])
+            self.game.actions()
+            self.drawMonster(self.game.npcs[0])
             
     def changeDisplay(self,display):
         self.window.fill(BACKGROUND_COLOR)
         if display == "PLAY":
             self.game = Game(Level(self.MODE))
             self.drawLevel()
-            self.drawMonsters(self.game.npcs.values())
             self.drawPlayer(self.game.players[0])
             self.drawPlayer(self.game.players[1])
-            self.game.start()
+            self.drawMonster(self.game.npcs[0])
             self.in_game = True
         elif display == "QUIT":
             self.in_game = False
@@ -59,18 +60,22 @@ class UserInterface(object):
         pygame.draw.circle(self.window,players.color,pos,players.size)
         pygame.display.flip()
         
-    def drawMonsters(self, monsters):
-        for monster in monsters:
-            pos = monster.pos.toTuple()
-            pygame.draw.circle(self.window,monster.color,pos,monster.size)
-            pygame.draw.circle(self.window,(0,0,0),pos,monster.size/3)
+    def drawMonster(self, monster):
+        pos = monster.pos.toTuple()
+        pygame.draw.circle(self.window,monster.color,pos,monster.size)
+        pygame.draw.circle(self.window,(0,0,0),pos,monster.size/3)
         pygame.display.flip()
             
     def erasePlayer(self,player):
         pos = player.pos.toTuple()
         pygame.draw.circle(self.window,BACKGROUND_COLOR,pos,player.size)
         pygame.display.flip()
-            
+        
+    def eraseMonster(self, monster):
+        pos = monster.pos.toTuple()
+        pygame.draw.circle(self.window,BACKGROUND_COLOR,pos,monster.size) 
+        pygame.display.flip()
+             
     def drawLevel(self):
         for line in self.game.level.lines:
             p1 = line.p1.toTuple()
@@ -116,52 +121,61 @@ class UserInterface(object):
             self.drawPlayer(player)
                 
 class Button(object):
+
     rectangle = None
     action = None
     text = None
+    
     def __init__(self,rectangle,text,action):
         self.rectangle = rectangle    
         self.action = action
         self.text = text
+        
     def bright(self):
         color = self.rectangle.color 
-        bright = 1.0/3   
+        bright = 0.33  
         red= ((255-color[0])*bright) +color[0]
-        green = ((255-color[1])*bright) +color[1]   
-        blue = ((255-color[2])*bright) +color[2]
-        self.rectangle.color = (red,green,blue)
+        gre= ((255-color[1])*bright) +color[1]   
+        blu= ((255-color[2])*bright) +color[2]
+        self.rectangle.color = (red,gre,blu)
+        
     def getAction(self):
         self.bright()
         return self.action
+        
     def textRectangle(self):
         if pygame.font:
             font = pygame.font.SysFont('Arial',20)
             write = font.render(self.text, 1,(0,0,255))
-            textpos = write.get_rect(center=((self.rectangle.pointUL.x+self.rectangle.pointDR.x)/2,(self.rectangle.pointUL.y+self.rectangle.pointDR.y)/2))
-        return write, textpos
+            x = (self.rectangle.pointUL.x+self.rectangle.pointDR.x)/2
+            y = (self.rectangle.pointUL.y+self.rectangle.pointDR.y)/2
+            textpos = write.get_rect(center=(x,y))
+        return write,textpos
 
 class Menu(object):
+
+    ui = None
     title = None
     buttons = []
-    ui = None
-    prop_title = None
+    
     def __init__(self,title,ui):
-        self.title = title
+        
         self.ui = ui
+        self.title = title
         self.buttons = []
         self.make()
         self.display(True)
     
     def make_buttons(self,list_names):
         n = len(list_names)
-        self.prop_title= self.ui.MODE[1]/(n+1)
+        prop_title= self.ui.MODE[1]/(n+1)
         prop_script= (self.ui.MODE[1]*n)/(n+1)
         nb_u=1.5+(1.5*n)
         u = prop_script/nb_u
         color = BUTTONS_COLOR
         rect_l = (self.ui.MODE[0])/3
         rect_r = (2*self.ui.MODE[0])/3
-        rect_up = self.prop_title+u
+        rect_up = prop_title+u
         for name in list_names:
             rect_dr= rect_up+u
             pointUL = Point(rect_l,rect_up)
@@ -176,32 +190,70 @@ class Menu(object):
             
     def make(self):
         if self.title == "Le Labyrinthe":
-            self.make_buttons(["1PLAYER","MULTIPLAYER","EDITOR","CREDIT","QUIT"])
+            self.make_buttons([
+            "1PLAYER",
+            "MULTIPLAYER",
+            "EDITOR",
+            "CREDIT",
+            "QUIT"])
+            
         if self.title == "1PLAYER":
-            self.make_buttons(
-            ["DIFFICULTE","AVATAR","SEED","GAME TYPE","PLAY",("BACK","Le Labyrinthe")])
+            self.make_buttons([
+            "PLAY",
+            "DIFFICULTE",
+            "AVATAR",
+            "SEED",
+            "GAME TYPE",
+            ("BACK","Le Labyrinthe")])
+            
         if self.title == "MULTIPLAYER":
-            self.make_buttons(
-            ["DIFFICULTE","AVATAR","SEED","GAME TYPE","PLAY",("BACK","Le Labyrinthe")])
+            self.make_buttons([
+            "DIFFICULTE",
+            "AVATAR",
+            "SEED",
+            "GAME TYPE",
+            "PLAY",
+            ("BACK","Le Labyrinthe")])
+            
         if self.title == "EDITOR":
-            self.make_buttons(
-            ["WIDTH","HIGHT","SEED","GENERATE",("BACK","Le Labyrinthe")])
+            self.make_buttons([
+            "WIDTH",
+            "HIGHT",
+            "SEED",
+            "GENERATE",
+            ("BACK","Le Labyrinthe")])
+            
         if self.title=="CREDIT":
-            self.make_buttons(["FUCK IT"])
+            self.make_buttons([
+            "FUCK IT"])
+            
         if self.title == "DIFFICULTE":
-            self.make_buttons(["EASY","MEDIUM","HARD"])
+            self.make_buttons([
+            "EASY",
+            "MEDIUM",
+            "HARD"])
+            
         if self.title == "AVATAR":
-            self.make_buttons(["AVATAR_1","AVATAR_2","AVATAR_3"])
+            self.make_buttons([
+            "AVATAR_1",
+            "AVATAR_2",
+            "AVATAR_3"])
+            
         if self.title == "SEED":
             input("seed:")
+            
         if self.title == "GAME TYPE":
-            self.make_buttons(["CHRONO","VERSUS","SURVIVAL"])
+            self.make_buttons([
+            "CHRONO",
+            "VERSUS",
+            "SURVIVAL"])
         
     def display(self,pushed):
         self.ui.window.fill(BACKGROUND_COLOR)
+        prop_title= self.ui.MODE[1]/(len(self.buttons)+1)
         font = pygame.font.SysFont('Arial',50) #TODO taille adaptee
         text = font.render(self.title, 1,TITLE_COLOR)
-        textpos = text.get_rect(center=(self.ui.MODE[0]/2,self.prop_title/2))
+        textpos = text.get_rect(center=(self.ui.MODE[0]/2,prop_title/2))
         self.ui.window.blit(text,textpos)
         for button in self.buttons:
             x = button.rectangle.pointUL.x
@@ -217,8 +269,7 @@ class Menu(object):
                 yb = y-BORDER_SIZE
                 pygame.draw.rect(self.ui.window,(0,0,0),(xb,yb,wb,hb))
             pygame.draw.rect(self.ui.window,button.rectangle.color,(x,y,w,h))
-            t=button.textRectangle()
-            self.ui.window.blit(t[0],t[1])
+            self.ui.window.blit(*button.textRectangle())
             pygame.display.flip()   
             pygame.display.update()
         
@@ -227,7 +278,7 @@ class Menu(object):
             if inside_rect(event.pos,button.rectangle):
                 a = button.getAction()
                 self.display(False)
-                time.sleep(0.1)
+                time.sleep(0.05)
                 self.ui.changeDisplay(a)
         
             
