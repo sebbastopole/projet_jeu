@@ -5,6 +5,8 @@ from game_ui import UserInterface
 def main():
     ui = UserInterface() #init interface utilisateur
     while ui.running:
+        if ui.in_game:
+            ui.update()
         event = pygame.event.poll()
         if event.type == pygame.QUIT:
             ui.running = False
@@ -13,6 +15,7 @@ def main():
             ui.keyEvent(event)
         elif event.type == pygame.MOUSEBUTTONDOWN:
             ui.mouseEvent(event)
+            
         
 main()
 

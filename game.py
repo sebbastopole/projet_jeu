@@ -1,9 +1,8 @@
-from threading import Thread
 from entity import *
 from level import *
 import time
 
-class Game(Thread):
+class Game(object):
     
     ui = None
     level = None
@@ -11,7 +10,6 @@ class Game(Thread):
     npcs = {}
     
     def __init__(self,ui):
-        Thread.__init__(self)
         self.ui = ui
         self.level = Level(ui.MODE)
         self.players[0]=Entity(0,Point((self.level.PAS_X/2)*15,300))
@@ -19,11 +17,7 @@ class Game(Thread):
         self.npcs[0] = Monster(self,0,Point(self.level.PAS_X/2,200))
         self.npcs[0].setAI(BasicAI)
         
-    def run(self):
-        while self.ui.in_game:
-            for npc in self.npcs.values():
-                #self.ui.eraseMonster(npc)
-                npc.action()
-                self.ui.drawMonster(npc)
-            time.sleep(5)
+    def start(self):
+        for npc in self.npcs.values():
+            npc.start()
                 

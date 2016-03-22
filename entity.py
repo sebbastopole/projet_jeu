@@ -1,10 +1,11 @@
+from threading import Thread
 from utils import *
 from ai import *
 
 DEFAULT_ENTITY_SIZE = 10
 DEFAULT_MONSTER_SIZE = 5
         
-class Entity(object):
+class Entity(Thread):
 
     pos = None 
     color = None
@@ -13,6 +14,7 @@ class Entity(object):
     size = DEFAULT_ENTITY_SIZE
     
     def __init__(self, entId, pos):
+        Thread.__init__(self)
         self.entId = entId
         self.pos = pos
         self.color = rgb()
@@ -27,15 +29,18 @@ class Monster(Entity):
     size = DEFAULT_MONSTER_SIZE
     
     def __init__(self, game, entId, pos):
+        Thread.__init__(self)
         Entity.__init__(self,entId,pos)
         self.game = game
         
     def setAI(self, AI_class):
         self.ai = AI_class(self.game,self.entId)
         
-    def action(self):
-        if self.ai != None:
-            self.ai.decide()
+    def run(self):
+        while self.game.ui.in_game:
+            if self.ai != None:
+                self.ai.doAction()
+            time.sleep(0.1)
 
 
         

@@ -7,16 +7,15 @@ class CondActionAI(object):
     actions = []
     
     def __init__(self, game, entId):
-    
         self.game = game
         self.entId = entId
         
     def addAction(self, action):
         self.actions.append(action)
         
-    def decide(self):
+    def doAction(self):
         for action in self.actions:
-            action(self)    
+            action(self)
     
 class BasicAI(CondActionAI):
     
